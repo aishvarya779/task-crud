@@ -4,7 +4,8 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA
 } from '@angular/material/dialog';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
+import { HomeService } from '../home.service';
 
 @Component({
   selector: 'tm-edit-row',
@@ -13,14 +14,17 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 })
 export class EditRowComponent implements OnInit {
   taskForm: FormGroup;
+  allStatus: string[] = ['A', 'B', 'Not Started'];
   constructor(
     public dialogRef: MatDialogRef<EditRowComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private _fb: FormBuilder
+    private _fb: FormBuilder,
+    private _homeService: HomeService
   ) {}
 
   ngOnInit(): void {
     console.log(this.data);
+    this.initForm();
   }
 
   initForm() {
@@ -34,5 +38,19 @@ export class EditRowComponent implements OnInit {
 
   onCancle() {
     this.dialogRef.close();
+  }
+  submitForm(form: NgForm) {
+    if (form.invalid) {
+      return;
+    }
+    this._homeService.createTask(this.taskForm.value).subscribe(
+      res => {
+        console.log(res);
+        this.dialogRef.close(this.taskForm.value);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 }

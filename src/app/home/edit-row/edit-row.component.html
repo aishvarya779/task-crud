@@ -1,12 +1,39 @@
 <h1 mat-dialog-title>{{data ? 'Update':'Create'}} Task</h1>
 <div mat-dialog-content>
-  <p>What's your favorite animal?</p>
-  <mat-form-field>
-    <mat-label>Favorite Animal</mat-label>
-    <input matInput [(ngModel)]="data.animal">
-  </mat-form-field>
+  <form [formGroup]="taskForm" #tForm="ngForm" fxLayout="column" novalidate>
+    <div fxLayout="row">
+      <label for="priority" class="mr-10">Select Priority</label>
+      <mat-radio-group id="priority" aria-label="Select an option" formControlName="priority"
+        fxLayoutAlign="space-between" fxAlignContent="space-between">
+        <mat-radio-button value="low">Low</mat-radio-button>
+        <mat-radio-button value="medium">Medium</mat-radio-button>
+        <mat-radio-button value="high">High</mat-radio-button>
+      </mat-radio-group>
+
+    </div>
+    <mat-form-field>
+      <mat-label>Task ID</mat-label>
+      <input matInput formControlName="id" type="number" placeholder="Enter Task ID">
+      <mat-error *ngIf="true">Task ID is requires</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Select Status</mat-label>
+      <mat-select formControlName="status">
+        <mat-option *ngFor="let status of allStatus" [value]="status">
+          {{status}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="true">Status is requires</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description"></textarea>
+      <mat-error *ngIf="true">Description is requires</mat-error>
+    </mat-form-field>
+  </form>
 </div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onCancle()">No Thanks</button>
-  <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Ok</button>
+<div mat-dialog-actions fxLayoutAlign="space-between">
+  <button mat-raised-button color="accent" (click)="onCancle()">Cancle</button>
+  <button mat-raised-button color="primary" type="submit" (click)="submitForm(tForm)">Submit</button>
 </div>
