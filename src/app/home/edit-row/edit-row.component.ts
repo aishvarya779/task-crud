@@ -23,8 +23,10 @@ export class EditRowComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log(this.data);
     this.initForm();
+    if (this.data) {
+      this.taskForm.patchValue(this.data);
+    }
   }
 
   initForm() {
@@ -40,16 +42,36 @@ export class EditRowComponent implements OnInit {
     this.dialogRef.close();
   }
   submitForm(form: NgForm) {
-    if (form.invalid) {
-      return;
+    // if (form.invalid) {
+    //   return;
+    // }
+    if (this.data && this.data.name) {
+      this.updateTask(form);
+    } else {
+      this.createTask(form);
     }
+  }
+
+  createTask(form: NgForm) {
     this._homeService.createTask(this.taskForm.value).subscribe(
       res => {
-        console.log(res);
         this.dialogRef.close(this.taskForm.value);
+        this._homeService.showSuccess('New Task added Successfully');
       },
       err => {
-        console.log(err);
+        this._homeService.showError(err);
+      }
+    );
+  }
+
+  updateTask(form: NgForm) {
+    this._homeService.updateTask(this.data.name, this.taskForm.value).subscribe(
+      res => {
+        this.dialogRef.close(this.taskForm.value);
+        this._homeService.showSuccess('Task updated Successfully');
+      },
+      err => {
+        this._homeService.showError(err);
       }
     );
   }

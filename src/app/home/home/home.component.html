@@ -1,4 +1,9 @@
 <div fxLayout="column" id="home">
+  <div fxLayoutAlign="start">
+    <button mat-raised-button color="primary" (click)="openUpdateDialog()">
+      Add Row
+    </button>
+  </div>
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
     <ng-container matColumnDef="title">

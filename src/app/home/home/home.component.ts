@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HomeService } from '../home.service';
 import { take } from 'rxjs/operators';
 import { TASK } from '../../shared/models/task';
-
+import { MatTableDataSource } from '@angular/material/table';
 @Component({
   selector: 'tm-home',
   templateUrl: './home.component.html',
@@ -10,7 +10,7 @@ import { TASK } from '../../shared/models/task';
 })
 export class HomeComponent implements OnInit {
   displayedColumns: string[] = ['title', 'description', 'action'];
-  dataSource: TASK[];
+  dataSource: MatTableDataSource<TASK>;
   constructor(private _homeService: HomeService) {}
 
   ngOnInit(): void {
@@ -23,11 +23,10 @@ export class HomeComponent implements OnInit {
       .pipe(take(1))
       .subscribe(
         (res: TASK[]) => {
-          console.log(res);
-          this.dataSource = res;
+          this.dataSource = new MatTableDataSource(res);
         },
         err => {
-          console.log(err);
+          this._homeService.showError(err);
         }
       );
   }
@@ -38,19 +37,21 @@ export class HomeComponent implements OnInit {
       .pipe(take(1))
       .subscribe(
         res => {
-          console.log(res);
+          this.getAllTask();
+          this._homeService.showSuccess('Row deleted successfully');
         },
         err => {
-          console.log(err);
+          this._homeService.showError(err);
         }
       );
   }
 
-  openUpdateDialog(row) {
-    console.log(row);
+  openUpdateDialog(row?) {
     let dialogRef = this._homeService.openEditDialog(row);
     dialogRef.afterClosed().subscribe(res => {
-      console.log(res);
+      if (res) {
+        this.getAllTask();
+      }
     });
   }
 }
